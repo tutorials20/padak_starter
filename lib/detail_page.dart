@@ -331,7 +331,7 @@ class _DetailState extends State<DetailPage> {
                   // 추후 custom StarRatingBar Widget 적용
                   SizedBox(width: 5),
                   StarRatingBar(
-                    rating: comment.rating.toInt(),
+                    rating: comment.rating,
                     isUserInteractionEnabled: false,
                     size: 20,
                   ),
