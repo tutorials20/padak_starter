@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
 
@@ -6,6 +8,9 @@ import 'model/data/dummys_repository.dart';
 import 'model/response/comments_response.dart';
 import 'model/response/movie_response.dart';
 import 'model/widget/star_rating_bar.dart';
+
+// 3-1. 상세화면 - 라이브러리 임포트
+import 'package:http/http.dart' as http;
 
 class DetailPage extends StatefulWidget {
   final String movieId;
@@ -24,38 +29,96 @@ class _DetailState extends State<DetailPage> {
   MovieResponse _movieResponse;
   CommentsResponse _commentsResponse;
 
-  _DetailState(String movieId){
+  _DetailState(String movieId) {
     this.movieId = movieId;
+  }
+
+  // 3-1. 상세화면 - initState() 작성
+  @override
+  void initState() {
+    super.initState();
+    _requestMovie();
   }
 
   @override
   Widget build(BuildContext context) {
-    _movieResponse = DummysRepository.loadDummyMovie(movieId);
+    // 3-1. 상세화면 - 영화 상세 정보 더미 주석 처리
+    // _movieResponse = DummysRepository.loadDummyMovie(movieId);
 
-    _commentsResponse = DummysRepository.loadComments(movieId);
+    // 3-2. 상세화면 - 한줄평 목록 더미 주석 처리
+    // _commentsResponse = DummysRepository.loadComments(movieId);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(_movieResponse.title),
+          // 3-1. 상세화면 - title 수정
+          title: Text(_movieTitle),
         ),
-        body: _buildContents()
-    );
+        body: _buildContents());
+  }
+
+  // 3-1. 상세화면 - 영화 상세 데이터 받아오기1
+  void _requestMovie() async {
+    setState(() {
+      _movieResponse = null;
+      // 3-2. 상세화면 - 한줄평 변수 선언
+      _commentsResponse = null;
+    });
+    final movieResponse = await _getMovieResponse();
+    // 3-2. 상세화면 - 한줄평 목록 요청
+    final commentsResponse = await _getCommentsResponse();
+    setState(() {
+      _movieResponse = movieResponse;
+      // 3-2. 상세화면 - 한줄평 목록 갱신
+      _commentsResponse = commentsResponse;
+      _movieTitle = movieResponse.title;
+    });
+  }
+
+  // 3-1. 상세화면 - 영화 상세 데이터 받아오기2
+  Future<MovieResponse> _getMovieResponse() async {
+    final response =
+        await http.get('http://52.79.87.95:3003/movie?id=${widget.movieId}');
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final movieResponse = MovieResponse.fromJson(jsonData);
+      return movieResponse;
+    }
+    return null;
+  }
+
+  // 3-2. 상세화면 - 영화 한줄평 목록 받아오기
+  Future<CommentsResponse> _getCommentsResponse() async {
+    final response =
+    await http.get('http://52.79.87.95:3003/comments?id=${widget.movieId}');
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final movieResponse = CommentsResponse.fromJson(jsonData);
+      return movieResponse;
+    }
+    return null;
   }
 
   Widget _buildContents() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(8),
-      child: Column(
-        children: <Widget>[
-          _buildMovieSummary(),
-          _buildMovieSynopsis(),
-          _buildMovieCast(),
-          _buildComment(),
-        ],
-      ),
-    );
-  }
+    // 3-1. 상세화면 - 영화 상세 정보 데이터가 비었을 경우에 대한 분기 처리
+    Widget contentsWidget;
 
+    if (_movieResponse == null) {
+      contentsWidget = Center(child: CircularProgressIndicator());
+    } else
+      contentsWidget = SingleChildScrollView(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          children: <Widget>[
+            _buildMovieSummary(),
+            _buildMovieSynopsis(),
+            _buildMovieCast(),
+            _buildComment(),
+          ],
+        ),
+      );
+
+    return contentsWidget;
+  }
 
   Widget _buildMovieSummary() {
     return Column(
@@ -247,6 +310,7 @@ class _DetailState extends State<DetailPage> {
       ],
     );
   }
+
   Widget _buildComment() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +396,8 @@ class _DetailState extends State<DetailPage> {
 
   String _convertTimeStampToDataTime(int timestamp) {
     final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-    return dateFormatter.format(DateTime.fromMillisecondsSinceEpoch(timestamp * 1000));
+    return dateFormatter
+        .format(DateTime.fromMillisecondsSinceEpoch(timestamp * 1000));
   }
 
   void _presentCommentPage(BuildContext context) {
