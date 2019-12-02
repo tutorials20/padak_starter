@@ -89,7 +89,7 @@ class _DetailState extends State<DetailPage> {
   // 3-2. 상세화면 - 영화 한줄평 목록 받아오기
   Future<CommentsResponse> _getCommentsResponse() async {
     final response =
-    await http.get('http://52.79.87.95:3003/comments?id=${widget.movieId}');
+    await http.get('http://52.79.87.95:3003/comments?movie_id=${widget.movieId}');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       final movieResponse = CommentsResponse.fromJson(jsonData);
