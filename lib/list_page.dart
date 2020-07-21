@@ -18,63 +18,11 @@ class ListPage extends StatelessWidget {
       ),
       itemCount: movies.length,
       itemBuilder: (context, index) =>
-          _buildGridItem(context, movie: movies[index]),
+          _buildInkWellItem(context, movie: movies[index]),
     );
   }
 
-  _buildDummyItem() => Container(
-        padding: EdgeInsets.all(12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(
-              'https://padakpadak.s3.ap-northeast-2.amazonaws.com/image/1.jpg',
-              height: 120,
-            ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Text(
-                      '신과함께-죄와벌(bee)',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    _buildGradeImage(12)
-                  ]),
-                  Row(children: [
-                    SizedBox(height: 10),
-                  ]),
-                  Row(children: [
-                    Text('평점 : 139'),
-                    SizedBox(width: 10),
-                    Text('예매순위 : 1'),
-                    SizedBox(width: 10),
-                    Text('예매율 : 35.5'),
-                  ]),
-                  Row(children: [
-                    SizedBox(height: 10),
-                  ]),
-                  Row(children: [
-                    Text('개봉일 : 2020-20-20'),
-                  ]),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-
-  _buildGridItem(BuildContext context, {@required Movie movie}) => InkWell(
+  _buildInkWellItem(BuildContext context, {@required Movie movie}) => InkWell(
         child: _buildItem(movie),
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
