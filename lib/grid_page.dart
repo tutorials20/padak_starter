@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:padak_starter/detail_page.dart';
 import 'package:padak_starter/model/data/dummys_repository.dart';
 
 import 'model/response/movies_response.dart';
@@ -20,11 +21,17 @@ class GridPage extends StatelessWidget {
       ),
       itemCount: movies.length,
       itemBuilder: (context, index) =>
-          _buildGridItem(context, movie: movies[index]),
+          _buildInkWell(context, movie: movies[index]),
     );
   }
 
-// 1-4. Grid 리스트 화면 (Grid 아이템 화면 구축)
+  _buildInkWell(BuildContext context, {@required Movie movie}) => InkWell(
+        child: _buildGridItem(context, movie: movie),
+        onTap: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => DetailPage(movie.id)));
+        },
+      );
 
 // 1-4. Grid 리스트 화면 (관람 등급 이미지 버튼 함수 생성)
   _buildGradeImage(int grade) {
