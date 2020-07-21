@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 
+import 'model/data/dummys_repository.dart';
 import 'model/response/comments_response.dart';
 import 'model/response/movie_response.dart';
 
@@ -17,11 +18,12 @@ class DetailPage extends StatefulWidget {
 class _DetailState extends State<DetailPage> {
   String movieId;
   String _movieTitle = '';
-  MovieResponse _movieResponse;
+  MovieResponse _details;
   CommentsResponse _commentsResponse;
 
   _DetailState(String movieId){
     this.movieId = movieId;
+    _details = DummysRepository.loadDummyMovie(movieId);
   }
 
   @override
@@ -33,19 +35,38 @@ class _DetailState extends State<DetailPage> {
     return Scaffold(
         appBar: AppBar(
           // 2-1. 상세 화면 (제목 설정)
-          title: Text('Detail'),
+          title: Text(_details.title),
         ),
         // 2-1. 상세 화면 (전체 화면 세팅1)
-        body: Center(child: Text("Detail Page"))
+        body: _buildContent()
     );
   }
 
   // 2-1. 상세 화면 (전체 화면 세팅2)
 
-  Widget _buildMovieSummary() {
-    // 2-2. Summary 화면 (화면 구현)
-    return Text("영화 정보");
-  }
+  _buildMovieSummary()=> Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Image.network(_details.image, height: 180,),
+          SizedBox(width: 10,),
+          _buildMovieSummaryTextColumn(),
+        ],
+      ),
+      SizedBox(height: 10,),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildReservationRate(),
+          _buildVerticalDivider(),
+          _buildUserRating(),
+          _buildVerticalDivider(),
+          _buildAudience(),
+        ],
+      ),
+    ],
+  );
 
   // 2-2. Summary 화면 (1-2 과정)
 
@@ -69,6 +90,28 @@ class _DetailState extends State<DetailPage> {
     // 2-5. Comment 화면 (화면 구현)
     return Text("댓글 화면");
   }
+
+  _buildContent() => SingleChildScrollView(
+    padding: EdgeInsets.all(8),
+    child: Column(
+      children: [
+        _buildMovieSummary(),
+        _buildMovieSynopsis(),
+        _buildMovieCast(),
+        _buildComment(),
+      ],
+    ),
+  );
+
+  _buildMovieSummaryTextColumn() =>Text('_buildMovieSummaryTextColumn');
+
+  _buildReservationRate()  => Text('예매율');
+
+  _buildUserRating()  => Text('평점');
+
+  _buildVerticalDivider() => Text('|');
+
+  _buildAudience() => Text('관객수');
 
   // 2-5. Comment 화면 (한줄평 리스트)
 
