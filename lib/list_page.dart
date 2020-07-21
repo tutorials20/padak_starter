@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:padak_starter/detail_page.dart';
 
 import 'model/data/dummys_repository.dart';
 import 'model/response/movies_response.dart';
@@ -16,7 +17,8 @@ class ListPage extends StatelessWidget {
         color: Colors.grey,
       ),
       itemCount: movies.length,
-      itemBuilder: (context, index) => _buildItem(movies[index]),
+      itemBuilder: (context, index) =>
+          _buildGridItem(context, movie: movies[index]),
     );
   }
 
@@ -72,6 +74,15 @@ class ListPage extends StatelessWidget {
         ),
       );
 
+  _buildGridItem(BuildContext context, {@required Movie movie}) => InkWell(
+        child: _buildItem(movie),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => DetailPage(movie.id),
+          ));
+        },
+      );
+
 // 1-3. 리스트 화면 (고정 더미 데이터)
 
 // 1-3. 리스트 화면 (동적 데이터 호출1)
@@ -108,7 +119,7 @@ class ListPage extends StatelessWidget {
                     SizedBox(height: 10),
                   ]),
                   Row(children: [
-                    Text('평점 : ${movie.userRating/2}'),
+                    Text('평점 : ${movie.userRating / 2}'),
                     SizedBox(width: 10),
                     Text('예매순위 : ${movie.reservationGrade}'),
                     SizedBox(width: 10),
