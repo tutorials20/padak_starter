@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:intl/intl.dart';
 
 import 'model/data/dummys_repository.dart';
 import 'model/response/comments_response.dart';
@@ -88,12 +89,6 @@ class _DetailState extends State<DetailPage> {
 
   // 2-2. Summary 화면 (1-2 과정)
 
-  // 2-2. Summary 화면 (2-2 과정 - 예매율)
-
-  // 2-2. Summary 화면 (2-2 과정 - 평점)
-
-  // 2-2. Summary 화면 (2-2 과정 - 누적관객수)
-
   // 2-2. Summary 화면 (2-2 과정 - 구분선)
   Widget _buildMovieSynopsis() {
     // 2-3. Synopsis 화면 (화면 구현)
@@ -128,13 +123,38 @@ class _DetailState extends State<DetailPage> {
         ],
       );
 
-  _buildReservationRate() => Text('예매율');
+  // 2-2. Summary 화면 (2-2 과정 - 예매율)
+  _buildReservationRate() => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text('예매율',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${_details.reservationGrade}위 ${_details.reservationRate}%')
+        ],
+      );
 
-  _buildUserRating() => Text('평점');
+  // 2-2. Summary 화면 (2-2 과정 - 평점)
+  _buildUserRating() => Column(
+        children: <Widget>[
+          Text('평점',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${_details.userRating / 2}')
+        ],
+      );
 
-  _buildVerticalDivider() => Text('|');
+  _buildVerticalDivider() => Container(width: 1, height: 50, color: Colors.grey);
 
-  _buildAudience() => Text('관객수');
+  // 2-2. Summary 화면 (2-2 과정 - 누적관객수)
+  _buildAudience() => Column(
+    children: <Widget>[
+      Text('누적관객수',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      SizedBox(height: 10),
+      Text('${NumberFormat.decimalPattern().format(_details.audience)}')
+    ],
+  );
 
 // 2-5. Comment 화면 (한줄평 리스트)
 
