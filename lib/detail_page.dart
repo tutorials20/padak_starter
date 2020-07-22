@@ -11,9 +11,7 @@ class DetailPage extends StatefulWidget {
   DetailPage(this.movieId);
 
   @override
-  State<StatefulWidget> createState() {
-    return _DetailState(movieId);
-  }
+  State<StatefulWidget> createState() => _DetailState(movieId);
 }
 
 class _DetailState extends State<DetailPage> {
@@ -28,21 +26,13 @@ class _DetailState extends State<DetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // 2-1. 상세 화면 (테스트 데이터 설정 - 영화 상세)
-
-    // 2-5. 상세 화면 (테스트 데이터 설정 - 댓글 상세)
-
-    return Scaffold(
-        appBar: AppBar(
-          // 2-1. 상세 화면 (제목 설정)
-          title: Text(_details.title),
-        ),
-        // 2-1. 상세 화면 (전체 화면 세팅1)
-        body: _buildContent());
-  }
-
-  // 2-1. 상세 화면 (전체 화면 세팅2)
+  Widget build(BuildContext context) => Scaffold(
+      appBar: AppBar(
+        // 2-1. 상세 화면 (제목 설정)
+        title: Text(_details.title),
+      ),
+      // 2-1. 상세 화면 (전체 화면 세팅1)
+      body: _buildContent());
 
   _buildContent() => SingleChildScrollView(
         padding: EdgeInsets.all(8),
@@ -87,23 +77,64 @@ class _DetailState extends State<DetailPage> {
         ],
       );
 
-  // 2-2. Summary 화면 (1-2 과정)
+  // 2-3. Synopsis 화면 (화면 구현)
+  _buildMovieSynopsis() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            width: double.infinity,
+            height: 10,
+            color: Colors.grey.shade400,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 10),
+            child: Text(
+              '줄거리',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.only(left: 16, top: 10, bottom: 5),
+              child: Text(_details.synopsis))
+        ],
+      );
 
-  // 2-2. Summary 화면 (2-2 과정 - 구분선)
-  Widget _buildMovieSynopsis() {
-    // 2-3. Synopsis 화면 (화면 구현)
-    return Text("영화 줄거리");
-  }
+  _buildMovieCast() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            width: double.infinity,
+            height: 10,
+            color: Colors.grey.shade400,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 10),
+            child: Text(
+              '감독/출연',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.only(left: 16, top: 10, bottom: 5),
+              child: Column(children: <Widget>[
+                Row(children: <Widget>[
+                  Text('감독', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(width: 10),
+                  Text(_details.director)
+                ]),
+                SizedBox(height: 5),
+                Row(children: <Widget>[
+                  Text('출연', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(width: 10),
+                  Expanded(child: Text(_details.actor))
+                ])
+              ]))
+        ],
+      );
 
-  Widget _buildMovieCast() {
-    // 2-4. MovieCast 화면 (감독 / 출연 구현)
-    return Text("감독/출연");
-  }
-
-  Widget _buildComment() {
-    // 2-5. Comment 화면 (화면 구현)
-    return Text("댓글 화면");
-  }
+  _buildComment() => Text("댓글 화면");
 
   _buildMovieSummaryTextColumn() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,17 +175,19 @@ class _DetailState extends State<DetailPage> {
         ],
       );
 
-  _buildVerticalDivider() => Container(width: 1, height: 50, color: Colors.grey);
+  // 2-2. Summary 화면 (2-2 과정 - 구분선)
+  _buildVerticalDivider() =>
+      Container(width: 1, height: 50, color: Colors.grey);
 
   // 2-2. Summary 화면 (2-2 과정 - 누적관객수)
   _buildAudience() => Column(
-    children: <Widget>[
-      Text('누적관객수',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-      SizedBox(height: 10),
-      Text('${NumberFormat.decimalPattern().format(_details.audience)}')
-    ],
-  );
+        children: <Widget>[
+          Text('누적관객수',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${NumberFormat.decimalPattern().format(_details.audience)}')
+        ],
+      );
 
 // 2-5. Comment 화면 (한줄평 리스트)
 
