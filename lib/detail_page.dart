@@ -15,14 +15,12 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailState extends State<DetailPage> {
-  String movieId;
-  String _movieTitle = '';
   MovieResponse _details;
-  CommentsResponse _commentsResponse;
+  CommentsResponse _comment;
 
   _DetailState(String movieId) {
-    this.movieId = movieId;
-    _details = DummysRepository.loadDummyMovie(movieId);
+    this._details = DummysRepository.loadDummyMovie(movieId);
+    this._comment = DummysRepository.loadComments(movieId);
   }
 
   @override
@@ -74,6 +72,59 @@ class _DetailState extends State<DetailPage> {
               _buildAudience(),
             ],
           ),
+        ],
+      );
+
+  _buildMovieSummaryTextColumn() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _details.title,
+            style: TextStyle(fontSize: 22),
+          ),
+          Text(
+            '${_details.date} 개봉',
+            style: TextStyle(fontSize: 16),
+          ),
+          Text(
+            '${_details.genre} / ${_details.duration}분',
+            style: TextStyle(fontSize: 16),
+          )
+        ],
+      );
+
+  // 2-2. Summary 화면 (2-2 과정 - 예매율)
+  _buildReservationRate() => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text('예매율',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${_details.reservationGrade}위 ${_details.reservationRate}%')
+        ],
+      );
+
+  // 2-2. Summary 화면 (2-2 과정 - 평점)
+  _buildUserRating() => Column(
+        children: <Widget>[
+          Text('평점',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${_details.userRating / 2}')
+        ],
+      );
+
+  // 2-2. Summary 화면 (2-2 과정 - 구분선)
+  _buildVerticalDivider() =>
+      Container(width: 1, height: 50, color: Colors.grey);
+
+  // 2-2. Summary 화면 (2-2 과정 - 누적관객수)
+  _buildAudience() => Column(
+        children: <Widget>[
+          Text('누적관객수',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text('${NumberFormat.decimalPattern().format(_details.audience)}')
         ],
       );
 
@@ -134,66 +185,60 @@ class _DetailState extends State<DetailPage> {
         ],
       );
 
-  _buildComment() => Text("댓글 화면");
-
-  _buildMovieSummaryTextColumn() => Column(
+  _buildComment() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _details.title,
-            style: TextStyle(fontSize: 22),
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            width: double.infinity,
+            height: 10,
+            color: Colors.grey.shade400,
           ),
-          Text(
-            '${_details.date} 개봉',
-            style: TextStyle(fontSize: 16),
+          Container(
+            margin: EdgeInsets.only(left: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('한줄평',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                IconButton(
+                  icon: Icon(Icons.create),
+                  color: Colors.blue,
+                  onPressed: () => _onClickNewComment(context),
+                )
+              ],
+            ),
           ),
-          Text(
-            '${_details.genre} / ${_details.duration}분',
-            style: TextStyle(fontSize: 16),
-          )
+          _buildComments()
         ],
       );
 
-  // 2-2. Summary 화면 (2-2 과정 - 예매율)
-  _buildReservationRate() => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Text('예매율',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          Text('${_details.reservationGrade}위 ${_details.reservationRate}%')
-        ],
+  _onClickNewComment(BuildContext context) {}
+
+  _buildComments() => ListView.builder(
+      shrinkWrap: true,
+      primary: false,
+      padding: EdgeInsets.all(10),
+      itemCount: _comment.comments.length,
+      itemBuilder: (_, index) => _buildItem(comment: _comment.comments[index]));
+
+  _buildItem({@required Comment comment}) => Container(
+        margin: EdgeInsets.all(10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Icon(Icons.person_pin, size: 50),
+            SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(comment.writer),
+                SizedBox(width: 5),
+                Text(comment.contents)
+              ],
+            )
+          ],
+        ),
       );
-
-  // 2-2. Summary 화면 (2-2 과정 - 평점)
-  _buildUserRating() => Column(
-        children: <Widget>[
-          Text('평점',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          Text('${_details.userRating / 2}')
-        ],
-      );
-
-  // 2-2. Summary 화면 (2-2 과정 - 구분선)
-  _buildVerticalDivider() =>
-      Container(width: 1, height: 50, color: Colors.grey);
-
-  // 2-2. Summary 화면 (2-2 과정 - 누적관객수)
-  _buildAudience() => Column(
-        children: <Widget>[
-          Text('누적관객수',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          Text('${NumberFormat.decimalPattern().format(_details.audience)}')
-        ],
-      );
-
-// 2-5. Comment 화면 (한줄평 리스트)
-
-// 2-5. Comment 화면 (한줄평 아이템 화면 구축)
-
-// 2-5. Comment 화면 (포맷에 맞춰 날짜 데이터 반환)
-
-// 2-5. Comment 화면 (댓글 입력 창으로 이동)
 }
