@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
 
+import 'comment_page.dart';
 import 'model/data/dummys_repository.dart';
 import 'model/response/comments_response.dart';
 import 'model/response/movie_response.dart';
@@ -205,7 +206,7 @@ class _DetailState extends State<DetailPage> {
                 IconButton(
                   icon: Icon(Icons.create),
                   color: Colors.blue,
-                  onPressed: () => _onClickNewComment(context),
+                  onPressed: () => _openNewCommentPage(context),
                 )
               ],
             ),
@@ -213,8 +214,6 @@ class _DetailState extends State<DetailPage> {
           _buildComments()
         ],
       );
-
-  _onClickNewComment(BuildContext context) {}
 
   _buildComments() => ListView.builder(
       shrinkWrap: true,
@@ -235,10 +234,19 @@ class _DetailState extends State<DetailPage> {
               children: <Widget>[
                 Text(comment.writer),
                 SizedBox(width: 5),
+                Text(_formatDateTime(comment.timestamp)),
+                SizedBox(height: 5),
                 Text(comment.contents)
               ],
-            )
+            ),
           ],
         ),
       );
+
+  _formatDateTime(int timestamp) => DateFormat('yyyy-MM-dd HH:mm:ss')
+      .format(DateTime.fromMillisecondsSinceEpoch(timestamp * 1000));
+
+  _openNewCommentPage(BuildContext context) =>
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CommentPage(_details.title, _details.id)));
 }
